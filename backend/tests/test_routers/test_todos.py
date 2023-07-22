@@ -7,13 +7,15 @@ from tests.factory import TodoFactory
 
 class TestRouterTodoGET:
     def test_get_all_todos(self, client: TestClient, session: Session):
-        TodoFactory.create_todo(session, title="hello world", description="これはテストです。")
+        TodoFactory.create_todo(session)
+        TodoFactory.create_todo(session)
+        TodoFactory.create_todo(session)
 
         resp = client.get("/todos")
         assert resp.status_code == status.HTTP_200_OK
 
         data = resp.json()
-        assert len(data) == 1
+        assert len(data) == 3
 
     def test_get_one_todo(self, client: TestClient, session: Session):
         todo = TodoFactory.create_todo(session)
