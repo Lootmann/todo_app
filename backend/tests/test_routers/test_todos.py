@@ -7,13 +7,34 @@ from tests.factory import TodoFactory
 
 class TestRouterTodoGET:
     def test_get_all_todos(self, client: TestClient, session: Session):
-        TodoFactory.create_todo(session, title="hello world", description="これはテストです。")
+        TodoFactory.create_todo(session)
+        TodoFactory.create_todo(session)
+        TodoFactory.create_todo(session)
 
         resp = client.get("/todos")
         assert resp.status_code == status.HTTP_200_OK
 
         data = resp.json()
-        assert len(data) == 1
+        assert len(data) == 3
+
+    def test_get_all_todos_filtered_by_title(self, client: TestClient, session: Session):
+        TodoFactory.create_todo(session, title="hoge", description="ほげ")
+        TodoFactory.create_todo(session, title="hage", description="はげ")
+        TodoFactory.create_todo(session, title="higa", description="ひが")
+
+        resp = client.get("/todos?title=a")
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_200_OK
+        assert len(data) == 2
+
+        resp = client.get("/todos?title=h")
+        data = resp.json()
+        assert len(data) == 3
+
+        resp = client.get("/todos?title=z")
+        data = resp.json()
+        assert len(data) == 0
 
     def test_get_one_todo(self, client: TestClient, session: Session):
         todo = TodoFactory.create_todo(session)

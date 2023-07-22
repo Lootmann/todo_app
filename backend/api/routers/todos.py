@@ -15,7 +15,9 @@ router = APIRouter(tags=["todos"])
     response_model=List[todo_model.TodoRead],
     status_code=status.HTTP_200_OK,
 )
-def read_todos(*, db: Session = Depends(get_session)):
+def read_todos(*, db: Session = Depends(get_session), title: str = None):
+    if title:
+        return todo_api.filter_by_title(db, title)
     return todo_api.get_all_todos(db)
 
 
