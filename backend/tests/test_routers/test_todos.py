@@ -117,3 +117,28 @@ class TestRouterTodoPATCH:
         assert resp.status_code == status.HTTP_200_OK
         assert data["title"] == ""
         assert data["description"] == "hogehoge"
+
+
+class TestRouterTodoDELETE:
+    def test_delete_todo(self, client: TestClient, session: Session):
+        todo = TodoFactory.create_todo(session)
+
+        resp = client.get("/todos")
+        data = resp.json()
+        assert len(data) == 1
+
+        resp = client.delete(f"/todos/{todo.id}")
+        data = resp.json()
+        assert resp.status_code == status.HTTP_200_OK
+        assert data == None
+
+        resp = client.get("/todos")
+        data = resp.json()
+        assert len(data) == 0
+
+    def test_delete_todo_with_wrongid(self, client: TestClient, session: Session):
+        resp = client.delete("/todos/101")
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+        assert data["detail"] == "Todo 101 Not Found"

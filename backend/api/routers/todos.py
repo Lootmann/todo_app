@@ -56,3 +56,17 @@ def update_todo(*, db: Session = Depends(get_session), todo_id: int, todo: todo_
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo {todo_id} Not Found"
         )
     return todo_api.update_todo(db, found, todo)
+
+
+@router.delete(
+    "/todos/{todo_id}",
+    response_model=None,
+    status_code=status.HTTP_200_OK,
+)
+def delete_todo(*, db: Session = Depends(get_session), todo_id: int):
+    found = todo_api.find_by_id(db, todo_id)
+    if not found:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo {todo_id} Not Found"
+        )
+    return todo_api.delete_todo(db, found)
