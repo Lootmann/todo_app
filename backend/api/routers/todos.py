@@ -44,3 +44,15 @@ def create_todo(*, db: Session = Depends(get_session), todo: todo_model.TodoCrea
     return todo_api.create_todo(db, todo)
 
 
+@router.patch(
+    "/todos/{todo_id}",
+    response_model=todo_model.TodoRead,
+    status_code=status.HTTP_200_OK,
+)
+def update_todo(*, db: Session = Depends(get_session), todo_id: int, todo: todo_model.TodoUpdate):
+    found = todo_api.find_by_id(db, todo_id)
+    if not found:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo {todo_id} Not Found"
+        )
+    return todo_api.update_todo(db, found, todo)

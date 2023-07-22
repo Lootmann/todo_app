@@ -63,3 +63,57 @@ class TestRouterTodoPOST:
         assert data["id"] == 1
         assert data["title"] == "hoge"
         assert data["description"] == "ほげ"
+
+
+class TestRouterTodoPATCH:
+    def test_update_todo(self, client: TestClient, session: Session):
+        todo = TodoFactory.create_todo(session, title="zzz", description="zzz")
+
+        resp = client.patch(f"/todos/{todo.id}", json={"title": "hoge", "description": "ほげ"})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_200_OK
+        assert data["id"] == todo.id
+        assert data["title"] != "zzz"
+        assert data["title"] == "hoge"
+        assert data["description"] != "zzz"
+        assert data["description"] == "ほげ"
+
+    def test_update_todo_with_wrong_todoid(self, client: TestClient, session: Session):
+        todo = TodoFactory.create_todo(session, title="zzz", description="zzz")
+
+        resp = client.patch(f"/todos/{todo.id + 100}", json={"title": "hoge", "description": "ほげ"})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+        assert data["detail"] == f"Todo {todo.id + 100} Not Found"
+
+    def test_update_todo_with_empty_fields(self, client: TestClient, session: Session):
+        todo = TodoFactory.create_todo(session, title="zzz", description="zzz")
+
+        resp = client.patch(f"/todos/{todo.id}", json={})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_200_OK
+        assert data["title"] == ""
+        assert data["description"] == ""
+
+    def test_update_todo_with_only_title(self, client: TestClient, session: Session):
+        todo = TodoFactory.create_todo(session, title="zzz", description="zzz")
+
+        resp = client.patch(f"/todos/{todo.id}", json={"title": "hogehoge"})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_200_OK
+        assert data["title"] == "hogehoge"
+        assert data["description"] == ""
+
+    def test_update_todo_with_only_description(self, client: TestClient, session: Session):
+        todo = TodoFactory.create_todo(session, title="zzz", description="zzz")
+
+        resp = client.patch(f"/todos/{todo.id}", json={"description": "hogehoge"})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_200_OK
+        assert data["title"] == ""
+        assert data["description"] == "hogehoge"
