@@ -64,6 +64,33 @@ class TestRouterTodoPOST:
         assert data["title"] == "hoge"
         assert data["description"] == "ほげ"
 
+    def test_create_todo_with_only_title(self, client: TestClient, session: Session):
+        resp = client.post("/todos", json={"title": "hoge"})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_201_CREATED
+        assert data["id"] == 1
+        assert data["title"] == "hoge"
+        assert data["description"] == ""
+
+    def test_create_todo_with_only_description(self, client: TestClient, session: Session):
+        resp = client.post("/todos", json={"description": "hoge"})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_201_CREATED
+        assert data["id"] == 1
+        assert data["title"] == ""
+        assert data["description"] == "hoge"
+
+    def test_create_todo_with_empty_fields(self, client: TestClient, session: Session):
+        resp = client.post("/todos", json={})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_201_CREATED
+        assert data["id"] == 1
+        assert data["title"] == ""
+        assert data["description"] == ""
+
 
 class TestRouterTodoPATCH:
     def test_update_todo(self, client: TestClient, session: Session):
