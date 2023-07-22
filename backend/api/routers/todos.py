@@ -33,3 +33,14 @@ def read_todo(*, db: Session = Depends(get_session), todo_id: int):
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo {todo_id} Not Found"
         )
     return found
+
+
+@router.post(
+    "/todos",
+    response_model=todo_model.TodoRead,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_todo(*, db: Session = Depends(get_session), todo: todo_model.TodoCreate):
+    return todo_api.create_todo(db, todo)
+
+

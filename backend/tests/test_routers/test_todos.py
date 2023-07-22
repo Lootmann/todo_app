@@ -52,3 +52,14 @@ class TestRouterTodoGET:
 
         assert resp.status_code == status.HTTP_404_NOT_FOUND
         assert data["detail"] == "Todo 101 Not Found"
+
+
+class TestRouterTodoPOST:
+    def test_create_todo(self, client: TestClient, session: Session):
+        resp = client.post("/todos", json={"title": "hoge", "description": "ほげ"})
+        data = resp.json()
+
+        assert resp.status_code == status.HTTP_201_CREATED
+        assert data["id"] == 1
+        assert data["title"] == "hoge"
+        assert data["description"] == "ほげ"

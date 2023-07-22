@@ -22,7 +22,8 @@ class Todo(TodoBase, table=True):
 
 
 class TodoCreate(TodoBase):
-    pass
+    title: Optional[str] = ""
+    description: Optional[str] = ""
 
 
 class TodoRead(TodoBase):
