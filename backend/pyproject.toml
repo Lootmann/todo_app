@@ -1,0 +1,41 @@
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.py$'
+exclude = '''
+(
+      \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | venv
+    | \.idea
+    | \.vscode
+    | _build
+    | buck-out
+    | build
+    | dist
+    | migrations
+)
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test"]
+python_functions = ["test"]
+
+[tool.coverage]
+  [tool.coverage.run]
+  #when you need async-await function test...
+  #concurrency = ["multiprocessing", "greenlet", "thread"]
+  omit = ["tests/*", "venv", "./api/db.py", "**/*/__init__.py"]
+
+  [tool.coverage.report]
+  exclude_lines = ["if TYPE_CHECKING:"]
