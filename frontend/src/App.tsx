@@ -18,7 +18,7 @@ function App() {
     axios.get(URL).then((resp) => {
       setTodos(resp.data);
     });
-  });
+  }, []);
 
   return (
     <div
@@ -36,7 +36,7 @@ function App() {
 
             <ul>
               {todos.map((todo) => (
-                <li>
+                <li key={todo.id}>
                   {todo.id} {todo.title} {todo.description}
                 </li>
               ))}
